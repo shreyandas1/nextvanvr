@@ -1,7 +1,7 @@
-import { Scene } from "@/components/three/Scene";
-import { Link } from "next/link"
+import { Scene } from "@/components/three/Scene"
+import Link from "next/link";
 
-export default function Brain() {
+export default function Heart() {
     const heartProps = {
         materialFile: "./Heart_300K_8Ktexture.mtl",
         objectFile: "./Heart_300K_8Ktexture.obj",
@@ -11,7 +11,7 @@ export default function Brain() {
     return (
         <div>
             <Scene args={heartProps} />
-            <Link href="/">Back to main menu</Link>
+            <Link href="/settings">Back to main menu</Link>
         </div>
     )
 }
