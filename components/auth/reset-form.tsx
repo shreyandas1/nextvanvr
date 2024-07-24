@@ -7,8 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ResetSchema } from '@/schema'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { FormError } from '../form-error';
-import { FormSuccess } from '../form-success';
+import { FormError } from './form-error';
+import { FormSuccess } from './form-success';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -60,7 +60,7 @@ const ResetForm = () => {
                                         </FormItem>
                                     )} />
                     </div>
-                    <FormError message={error} />
+                    <FormError mes sage={error} />
                     <FormSuccess message={success} />
                     <Button type='submit'>
                         Reset

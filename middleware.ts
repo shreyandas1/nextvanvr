@@ -1,4 +1,4 @@
-import { log } from "console";
+import { log } from "console";  
 import authConfig from "./auth.config";
 import NextAuth, {DefaultSession} from "next-auth";
 
@@ -10,13 +10,13 @@ import {
     publicRoutes,
 
 } from "@/routes"
+import { userAgent } from "next/server";
 
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
     const { nextUrl } = req
-    console.log(req.auth);
     
 
 
@@ -33,19 +33,17 @@ export default auth((req) => {
 
     if (isAuthRoute) {
         if (isLoggedIn) {
-            return Response.redirect(new URL("/settings", nextUrl))
+            return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
         }
         return null;
     }
 
     if (!isLoggedIn && !isPublicRoute ) {
+       
+        
         return Response.redirect(new URL("/auth/login", nextUrl))
     }
 
-    if (isAdminOnlyRoutes && req.user.role == "USER") {
-        return Response.redirect(new URL("/settings", nextUrl))
-    }
-    
     return null;
 })
 

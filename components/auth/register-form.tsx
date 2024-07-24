@@ -7,8 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RegisterSchema } from '@/schema'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { FormError } from '../form-error';
-import { FormSuccess } from '../form-success';
+import { FormError } from './form-error';
+import { FormSuccess } from './form-success';
 import { register } from '@/actions/register';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/router';
