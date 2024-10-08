@@ -37,6 +37,6 @@ export const ModelSchema = z.object({
     }),
     mtlFile: z.instanceof(File),
     objFile: z.instanceof(File),
-    txtFile: z.instanceof(File)
+    txtFile: z.instanceof(File),
 })
 

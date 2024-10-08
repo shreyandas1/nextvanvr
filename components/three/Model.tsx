@@ -5,7 +5,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 
 // Model with mtl, obj and texture file 
-interface modelProps {
+export interface modelProps {
   materialFile: string,
   objectFile: string,
   textureFile: string,
@@ -19,5 +19,7 @@ export const Model = ({ materialFile, objectFile, textureFile }: modelProps) => 
     materials.preload();
     loader.setMaterials(materials);
   });
-  return <primitive object={obj} map={colorMap} position={[0, 0, 0]} />;
+  return (
+      <primitive object={obj} map={colorMap} position={[0, 0, 0]} />
+  )
 };

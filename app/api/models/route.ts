@@ -12,7 +12,7 @@ const checkFileType = (file:File, extension:string) => {
     return fileName.split('.')[1] === extension
 }
 
-const writeFileToDir = async ( dirname:string, file:File) => {
+ const writeFileToDir = async ( dirname:string, file:File) => {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 

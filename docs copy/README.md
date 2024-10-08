@@ -1,3 +1,38 @@
+# VanVR app
+
+## Introduction 
+1.  Project Overview
+   - The VanVR app is a website made for students to learn anatomy from high quality 3D models with annonatations to supplement a traditional anatomy lab.
+    Technical features
+   - Made primarily with Next.js,
+   - styled with tailwind.css
+   - a custom auth library with email verification, password recovery with a MySQL database and Auth.js
+2. Target Platform
+    - Web (Highest quality of model)
+    - AR on Mobile
+    - VR (Lowest quality of model)
+3. Tools
+    - Nextjs v14
+    - Authjs v5 (formerly NextAuth)
+    - Tailwind
+    - Prisma ORM
+    - MySQL 
+    - Typescript
+
+## Development Environment Setup
+   1. Prerequisites
+        - Nodejs
+        - git
+   2. Installation instructions
+        - clone github repo
+        - run npm install
+        - run npm run dev | run npm run build
+   3. Dependencies
+        - N/A
+
+
+
+## INDEX OF CONTENTS
 # Codebase Structure 
 
 
@@ -13,9 +48,9 @@
     - ### /(protected)/  
         Includes all client side protected routes. Need to be signed in to access
         
-        - /[model]
+        - /models/[id]
             Generic route for a model retrived from database 
-            For example, /brain goes to [model] where model = "brain"
+            Uses id to retrieve model files
         - /admin
             Only admin access allowed for any route in here
             - addModel
@@ -74,4 +109,33 @@
 - schema/index.js - Contains all form schemas and zod validation logic
 - auth.ts - auth config
 - auth.config.ts - Prisma can't handle edge services so all edge functionality is handled here
-- 
+- middleware.ts - Handles basic authentication and mass handles routes
+- routes.ts - Defines public, private and auth routes. DO NOT CHANGE WITHOUT PERMISSION.
+- /app/models/[id]  - Handles the display of models
+
+
+
+# Architecture
+
+## Schemas
+
+- MySQL Schema
+![alt text](image.png)
+
+Note: 
+    - Account is for OAuth authentication (not yet implemented)
+
+## Key Design Patterns
+
+- The Auth object is a singleton
+
+
+# Asset Management
+
+## Load model
+
+![alt text](image-1.png)
+
+- Model gets saved in the public directory and then gets displayed 
+- To avoid a big client bundle, only one model is loaded at a time ( can be changed later )
+- Each model has a unique url that can be shared and bookmarked

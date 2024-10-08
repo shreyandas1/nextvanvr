@@ -29,6 +29,7 @@ model User {
   role          UserRole  @default(USER)
   Account       Account?
   models        Model[]  @relation()
+
 }
 
 model Account {
@@ -61,6 +62,18 @@ model Model {
   txtFile String
   ownerEmail String?
   owner User? @relation(fields: [ownerEmail], references: [email])
+  annotations  Annotation[] @relation()
+}
+
+model Annotation {
+  id String @id @default(cuid())
+  annotationName String @unique
+  description String? 
+  modelName String
+  model Model @relation(fields: [modelName], references: [name])
+  x Int
+  y Int
+  z Int
 }
 
 model VerificationToken {
