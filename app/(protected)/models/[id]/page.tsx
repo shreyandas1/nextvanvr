@@ -1,77 +1,57 @@
 "use server";
-import { modelProps } from "@/components/three/Model";
+
 import { Scene } from "@/components/three/Scene";
-import { Button } from "@/components/ui/button";
-import { db } from "@/lib/db";
-import { ModelSchema } from "@/schema";
-import { writeFile, existsSync, mkdirSync, readFile, writeFileSync, readFileSync } from "fs";
-import Link from "next/link";
-import { join } from "path";
-import * as z from 'zod'
+import { downloadFileAsStream } from "@/lib/azure";
 
+// Define the file names
+const txtName = "Heart_300K_8Ktexture_u1_v1.jpg";
+const objName = "Heart_300K_8Ktexture.obj";
+const mtlName = "Heart_300K_8Ktexture.mtl";
 
+const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+    const binary = new Uint8Array(buffer).reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
+    return btoa(binary); // Convert binary string to base64
+};
 
-const writeFileToDir = async ( modelPath:string, buffer:Buffer, fileName:string) => {
+// Function to download a file as an ArrayBuffer
+const handleDownload = async (blobName: string): Promise<Buffer> => {
+  try {
+    // Download the file as a buffer
+    const buffer = await downloadFileAsStream(blobName);
+    return buffer;
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    throw error; // Re-throw the error to handle it elsewhere
+  }
+};
 
-    const dirPath = join(modelPath)
-    if (!existsSync(dirPath)) { 
-        mkdirSync(dirPath)
-    }
+// Download the files and create ModelProps
+const getModelProps = async () => {
+  const textureBuffer = await handleDownload(txtName);
+  const materialBuffer = await handleDownload(mtlName);
+  const objectBuffer = await handleDownload(objName);
 
-    writeFileSync(join(modelPath, fileName),  buffer)
-}   
+  // Return the ModelProps object
+  return {
+    textureFile: textureBuffer.toString("base64"),
+    materialFile: materialBuffer.toString("base64"),
+    objectFile: objectBuffer.toString("base64"),
+  };
+};
 
-const ModelPage = async ({ params }: { params: { id: string } }) => {
-
-    const model = await db.model.findUnique({
-        where: {
-            id: params.id
-        }
-    })
-
+// Export the Page component
+const Page = async () => {
+    // Get the ModelProps
+    const modelProps = await getModelProps();
+    console.log("done");
     
-    if (!model) {
-        return (
-            <p> Model not found!</p>
-        )
-    }
-
-   
-    // File fetching logic 
-    const modelPath = `models/${model.name}`
-    
-    const writeModelPath = `public/${modelPath}`                    
-
-    const displayModelProps:modelProps = { 
-        materialFile: join(modelPath, model.mtlFile),
-        objectFile: join(modelPath, model.objFile),
-        textureFile: join(modelPath, model.txtFile)
-    }       
-
-    const modelProps = { 
-        name: model.name,
-        materialFile: `../${modelPath}/${model.mtlFile}`,
-        objectFile: `../${modelPath}/${model.objFile}`,  
-        textureFile:`../${modelPath}/${model.txtFile}`  
-    }
-
-
-    const materialFileBuffer = readFileSync(displayModelProps.materialFile)
-    const textureFileBuffer = readFileSync(displayModelProps.textureFile)
-    const objectFileBuffer = readFileSync(displayModelProps.objectFile)
-
-    writeFileToDir(writeModelPath, materialFileBuffer, model.mtlFile)
-    writeFileToDir(writeModelPath, textureFileBuffer, model.txtFile)
-    writeFileToDir(writeModelPath, objectFileBuffer, model.objFile)     
-    
+  
     return (
-        <div>
-            <div>hyiuguvyuhyyu</div>
-            <Scene args={modelProps} />
-        </div>
-        
-    )   
-}
+        <Scene args={modelProps} />
+    );
+  };
 
-
-export default ModelPage    
+export default Page
