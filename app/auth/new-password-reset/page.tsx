@@ -1,11 +1,11 @@
-import { NewPasswordResetForm } from "../../../components/auth/new-password-reset"
+import { NewPasswordResetForm } from '../../../components/auth/new-password-reset';
 
 const NewPasswordResetPage = () => {
-    return (
-        <div>
-            <NewPasswordResetForm />
-        </div>
-    )
-}
+	return (
+		<div>
+			<NewPasswordResetForm />
+		</div>
+	);
+};
 
-export default NewPasswordResetPage
+export default NewPasswordResetPage;

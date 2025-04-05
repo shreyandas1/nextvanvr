@@ -1,43 +1,40 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/db";
-import { getUserByEmail } from "@/data/user";
-import { getVerificationTokenByToken } from "@/data/verification-token";
-import { error } from "console";
- 
-export const newVerification = async(token:string) => {
-    const existingToken = await getVerificationTokenByToken(token);
+import { db } from '@/lib/db';
+import { getUserByEmail } from '@/data/user';
+import { getVerificationTokenByToken } from '@/data/verification-token';
+import { error } from 'console';
 
+export const newVerification = async (token: string) => {
+	const existingToken = await getVerificationTokenByToken(token);
 
-    if (!existingToken) {
-        return { error: "Token does not exist!"}
-    }
+	if (!existingToken) {
+		return { error: 'Token does not exist!' };
+	}
 
-    const hasExpired = new Date(existingToken.expires) < new Date()
-   
-    if (hasExpired) {
-        return { error: "Token expired, Return to login to request another token"}
-    }
+	const hasExpired = new Date(existingToken.expires) < new Date();
 
-    const existingUser = await getUserByEmail(existingToken.email);
+	if (hasExpired) {
+		return { error: 'Token expired, Return to login to request another token' };
+	}
 
-    if (!existingUser) {
-        return { error: "Email does not exist"}
-    }
+	const existingUser = await getUserByEmail(existingToken.email);
 
-    
-    await db.user.update({
-        where:{ id:existingUser.id },
-        data: {
-            emailVerified: new Date(),
-            email: existingToken.email
-        }
-    })
+	if (!existingUser) {
+		return { error: 'Email does not exist' };
+	}
 
-    await db.verificationToken.delete({
-        where: {id: existingToken.id}
-    })
+	await db.user.update({
+		where: { id: existingUser.id },
+		data: {
+			emailVerified: new Date(),
+			email: existingToken.email,
+		},
+	});
 
-    return { success : "Email verified" }
-     
-}
+	await db.verificationToken.delete({
+		where: { id: existingToken.id },
+	});
+
+	return { success: 'Email verified' };
+};

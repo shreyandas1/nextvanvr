@@ -1,59 +1,86 @@
-import React, { useMemo } from "react";
-
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { TextureLoader } from "three";
+import React, { useMemo, useEffect, useState } from 'react';
+import { Buffer } from 'buffer';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
+import { TextureLoader } from 'three';
 
 export interface ModelProps {
-  materialFile: string; // MTL file as base4 representation of a Buffer from Azure
-  objectFile: string;  // OBJ file as base4 representation of a Buffer from Azure
-  textureFile: string; // Texture file as base4 representation of a Buffer from Azure
+	materialFile: string; // MTL file as base64 representation of a Buffer from Azure
+	objectFile: string; // OBJ file as base64 representation of a Buffer from Azure
+	textureFile: string; // Texture file as base64 representation of a Buffer from Azure
+	position?: [number, number, number]; // Optional position for the model
+	scale?: [number, number, number]; // Optional scale for the model
 }
 
-const base64ToBuffer = (base64: string): ArrayBuffer => {
-  const binary = atob(base64); // Decode base64 to binary string
-  const buffer = new ArrayBuffer(binary.length);
-  const view = new Uint8Array(buffer);
-  for (let i = 0; i < binary.length; i++) {
-    view[i] = binary.charCodeAt(i);
-  }
-  return buffer;
+const base64ToBuffer = (base64: string): Buffer => {
+	return Buffer.from(base64, 'base64');
 };
 
-export const Model = ({ materialFil, objectFil, textureFil }: ModelProps) => {
-  // Convert ArrayBuffer to text for MTL and OBJ files
+export const Model = ({
+	materialFile,
+	objectFile,
+	textureFile,
+	position = [0, 0, 0],
+	scale = [1, 1, 1],
+}: ModelProps) => {
+	const [texture, setTexture] = useState<THREE.Texture | null>(null);
+	const [materials, setMaterials] = useState<THREE.MaterialCreator | null>(
+		null
+	);
+	const [obj, setObj] = useState<THREE.Group | null>(null);
 
-  const materialFile = base64ToBuffer(materialFil)
-  const objectFile = base64ToBuffer(objectFil);
-  const textureFile = base64ToBuffer(textureFil)
+	// Convert ArrayBuffer to text for MTL and OBJ files
+	const materialBuffer = base64ToBuffer(materialFile);
+	const objectBuffer = base64ToBuffer(objectFile);
+	const textureBuffer = base64ToBuffer(textureFile);
 
-  const materialText = useMemo(() => new TextDecoder().decode(materialFile), [materialFile]);
-  const objectText = useMemo(() => new TextDecoder().decode(objectFile), [objectFile]);
+	const materialText = useMemo(
+		() => new TextDecoder().decode(materialBuffer),
+		[materialBuffer]
+	);
+	const objectText = useMemo(
+		() => new TextDecoder().decode(objectBuffer),
+		[objectBuffer]
+	);
 
-  // Load texture from ArrayBuffer
-  const texture = useMemo(() => {
-    const blob = new Blob([textureFile], { type: "image/jpeg" }); // Adjust MIME type if needed
-    const url = URL.createObjectURL(blob);
-    return new TextureLoader().load(url);
-  }, [textureFile]);
+	// Load texture from ArrayBuffer
+	useEffect(() => {
+		const blob = new Blob([textureBuffer], { type: 'image/jpeg' }); // Adjust MIME type if needed
+		const url = URL.createObjectURL(blob);
 
-  // Load materials from MTL text
-  const materials = useMemo(() => {
-    const mtlLoader = new MTLLoader();
-    return mtlLoader.parse(materialText);
-  }, [materialText]);
+		const textureLoader = new TextureLoader();
+		textureLoader.load(url, (loadedTexture) => {
+			setTexture(loadedTexture);
+			URL.revokeObjectURL(url); // Clean up object URL
+		});
 
-  // Load object from OBJ text
-  const obj = useMemo(() => {
-    const objLoader = new OBJLoader();
-    if (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-    }
-    return objLoader.parse(objectText);
-  }, [objectText, materials]);
+		return () => {
+			if (texture) texture.dispose(); // Clean up texture
+		};
+	}, [textureBuffer]);
 
-  return (
-    <primitive object={obj} map={texture} position={[0, 0, 0]} />
-  );
+	// Load materials from MTL text
+	useEffect(() => {
+		const mtlLoader = new MTLLoader();
+		const loadedMaterials = mtlLoader.parse(materialText);
+		setMaterials(loadedMaterials);
+	}, [materialText]);
+
+	// Load object from OBJ text
+	useEffect(() => {
+		if (!materials) return;
+
+		const objLoader = new OBJLoader();
+		materials.preload();
+		objLoader.setMaterials(materials);
+
+		const loadedObj = objLoader.parse(objectText);
+		setObj(loadedObj);
+	}, [objectText, materials]);
+
+	if (!obj || !texture) return null; // Render nothing until model and texture are loaded
+
+	return (
+		<primitive object={obj} map={texture} position={position} scale={scale} />
+	);
 };

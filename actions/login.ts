@@ -1,7 +1,7 @@
-"use server";
-import * as z from 'zod'
+'use server';
+import * as z from 'zod';
 import { LoginSchema } from '@/schema';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import { getUserByEmail } from '@/data/user';
 import { signIn } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
@@ -10,46 +10,45 @@ import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/mail';
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
-    const validatedFields = LoginSchema.safeParse(values)
-    
-    if (!validatedFields.success) {
-        return  { error: "Invalid fields!"} 
-    }
+	const validatedFields = LoginSchema.safeParse(values);
 
-    const { email, password } = validatedFields.data
+	if (!validatedFields.success) {
+		return { error: 'Invalid fields!' };
+	}
 
-    const existingUser = await getUserByEmail(email)
-    if (!existingUser || !existingUser.email || !existingUser.password) {
-        return { error: "Email does not exist"}
-    }
+	const { email, password } = validatedFields.data;
 
-    if (!existingUser.emailVerified) {
-        const verificationToken = await generateVerificationToken(existingUser.email)
-        await sendVerificationEmail(existingUser.email, verificationToken.token);
-        return { success: "Email not verified. New token sent" }
-    }
+	const existingUser = await getUserByEmail(email);
+	if (!existingUser || !existingUser.email || !existingUser.password) {
+		return { error: 'Email does not exist' };
+	}
 
-    try {
-        await signIn( "credentials", {
-            email,
-            password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT
-        })
-    } catch(error) {
-        if (error instanceof AuthError) {
-            switch(error.type) {
-                case "CredentialsSignin":
-                    return { error : "Invalid credentials"}
-                default:
-                    return { error: "Something went wrong!"}
-            }
-        }
+	if (!existingUser.emailVerified) {
+		const verificationToken = await generateVerificationToken(
+			existingUser.email
+		);
+		await sendVerificationEmail(existingUser.email, verificationToken.token);
+		return { success: 'Email not verified. New token sent' };
+	}
 
-        throw error
-    }
-   
+	try {
+		await signIn('credentials', {
+			email,
+			password,
+			redirectTo: DEFAULT_LOGIN_REDIRECT,
+		});
+	} catch (error) {
+		if (error instanceof AuthError) {
+			switch (error.type) {
+				case 'CredentialsSignin':
+					return { error: 'Invalid credentials' };
+				default:
+					return { error: 'Something went wrong!' };
+			}
+		}
 
-    return { success: "Logged in!"}
-    
-}
+		throw error;
+	}
 
+	return { success: 'Logged in!' };
+};
