@@ -6,19 +6,15 @@ import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { Scene } from '@/components/three/Scene';
-import { heartAnnotations } from '@/annotations/Heart';
+
 import { Html } from '@react-three/drei';
 import AnnotationAlert from '@/components/three/AnnotationAlert';
-import { set } from 'zod';
+import { fetchFileFromAzure } from '@/lib/azure';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import { log } from 'node:console';
 
-const connectionString = process.env.NEXT_PUBLIC_AZURE_CONNECTION_STRING;
 
-const containerName = 'win';
-const blobServiceClient =
-	BlobServiceClient.fromConnectionString(connectionString);
-const containerClient = blobServiceClient.getContainerClient(containerName);
 
 const heartProps = {
 	materialFile: 'Heart_300K_8Ktexture.mtl',
@@ -26,10 +22,6 @@ const heartProps = {
 	textureFile: 'Heart_300K_8Ktexture_u1_v1.jpg',
 };
 
-const fetchFileFromAzure = async (fileName: string): Promise<any> => {
-	const response = containerClient.getBlobClient(fileName);
-	return await response.download();
-};
 
 function HeartModel() {
 	const [model, setModel] = useState(null);
@@ -115,7 +107,6 @@ const Annotations = ({ annotations }) => {
 	);
 };
 
-function EditPanel() {}
 
 export default function HeartViewer() {
 	const [editMode, setEditMode] = useState(false);
@@ -136,7 +127,7 @@ export default function HeartViewer() {
 			return annotation;
 		});
 
-		setAnnotations(editMode ? updatedAnnotations : annotations);
+		setAnnotations(updatedAnnotations );
 	};
 
 	useEffect(() => {
@@ -146,6 +137,7 @@ export default function HeartViewer() {
 				const data = response.data;
 				console.log('Annotations data:', data);
 				setAnnotations(data);
+			
 				setAnnotationLength(data.length);
 			})
 			.catch((error) => {
@@ -153,8 +145,15 @@ export default function HeartViewer() {
 			});
 	}, []);
 
-	const saveAnnotations = async () => {
-		const content = JSON.stringify(annotations, null, 2);
+	const saveAnnotations = () => {
+		axios
+      .post('/api/heart', annotations)
+      .then((response) => {
+        console.log('Annotations saved successfully:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error saving annotations:', error);
+      });
 	};
 
 	return (
@@ -186,7 +185,7 @@ export default function HeartViewer() {
 						>
 							Next
 						</Button>
-						<Button onClick={() => {}}> Save Position </Button>
+						<Button onClick={saveAnnotations}> Save Position </Button>
 					</div>
 				) : (
 					<></>
@@ -202,3 +201,4 @@ export default function HeartViewer() {
 		</div>
 	);
 }
+

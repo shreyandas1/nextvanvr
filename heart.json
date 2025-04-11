@@ -1,20 +1,32 @@
 [
-	{
-		"id": 1,
-		"name": "Left Ventricle",
-		"description": "The left ventricle pumps oxygenated blood to the body.",
-		"position": [1.5, 0.5, -0.5]
-	},
-	{
-		"id": 2,
-		"name": "Right Atrium",
-		"description": "The right atrium receives deoxygenated blood from the body.",
-		"position": [-1.2, 1.0, 0.3]
-	},
-	{
-		"id": 3,
-		"name": "Aorta",
-		"description": "The aorta carries oxygenated blood from the heart to the body.",
-		"position": [0.0, 2.0, 0.0]
-	}
+  {
+    "id": 1,
+    "name": "Left Ventricle",
+    "description": "The left ventricle pumps oxygenated blood to the body.",
+    "position": {
+      "x": -7.705131517603187,
+      "y": 5.288535240923312,
+      "z": 4.9926537964296465
+    }
+  },
+  {
+    "id": 2,
+    "name": "Right Atrium",
+    "description": "The right atrium receives deoxygenated blood from the body.",
+    "position": {
+      "x": 2.041320121908571,
+      "y": 11.005953470830963,
+      "z": 5.462470225136514
+    }
+  },
+  {
+    "id": 3,
+    "name": "Aorta",
+    "description": "The aorta carries oxygenated blood from the heart to the body.",
+    "position": {
+      "x": -6.937700876499071,
+      "y": 9.182978959645649,
+      "z": 2.6750648543599596
+    }
+  }
 ]

@@ -1,95 +1,88 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
-enum UserRole {
-  ADMIN
-  USER
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  username      String?   @unique
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  role          UserRole  @default(USER)
-  Account       Account?
-  models        Model[]  @relation()
-
+  provider = "sqlserver"
+  url      = env("NEXT_PUBLIC_AZURE_SQL")
 }
 
 model Account {
-  id                       String  @id @default(cuid())
-  userId                   String  @unique
+  id                       String   @id @default(cuid())
+  userId                   String   @unique(map: "Account_userId_key")
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String? @db.Text
-  access_token             String? @db.Text
+  refresh_token            String?  @db.Text
+  access_token             String?  @db.Text
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String? @db.Text
+  id_token                 String?  @db.Text
   session_state            String?
   refresh_token_expires_in Int?
-  user                     User?   @relation(fields: [userId], references: [id])
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime
+  user                     User     @relation(fields: [userId], references: [id], map: "Account_userId_fkey")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([provider, providerAccountId])
-}
-
-model Model {
-  id      String @id @default(cuid())
-  name    String @unique
-  objFile String
-  mtlFile String
-  txtFile String
-  ownerEmail String?
-  owner User? @relation(fields: [ownerEmail], references: [email])
-  annotations  Annotation[] @relation()
+  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
 }
 
 model Annotation {
-  id String @id @default(cuid())
-  annotationName String @unique
-  description String? 
-  modelName String
-  model Model @relation(fields: [modelName], references: [name])
-  x Int
-  y Int
-  z Int
+  id             String  @id  @default(cuid())
+  annotationName String  @unique(map: "Annotation_annotationName_key")
+  description    String?
+  modelName      String
+  x              Int
+  y              Int
+  z              Int
+  model          Model   @relation(fields: [modelName], references: [name], map: "Annotation_modelName_fkey")
+
+  @@index([modelName], map: "Annotation_modelName_fkey")
 }
 
-model VerificationToken {
-  id      String   @id @default(cuid())
-  email   String
-  token   String   @unique
-  expires DateTime
+model Model {
+  id         String       @id @default(cuid())
+  name       String       @unique(map: "Model_name_key")
+  objFile    String
+  mtlFile    String
+  txtFile    String
+  ownerEmail String?
+  annotation Annotation[]
+  user       User?        @relation(fields: [ownerEmail], references: [email], map: "Model_ownerEmail_fkey")
 
-  @@unique([email, token])
+  @@index([ownerEmail], map: "Model_ownerEmail_fkey")
 }
 
 model PasswordResetToken {
   id      String   @id @default(cuid())
   email   String
-  token   String   @unique
+  token   String   @unique(map: "PasswordResetToken_token_key")
   expires DateTime
 
-  @@unique([email, token])
+  @@unique([email, token], map: "PasswordResetToken_email_token_key")
 }
+
+model User {
+  id            String    @id  @default(cuid())
+  name          String?
+  username      String?   @unique(map: "User_username_key")
+  email         String?   @unique(map: "User_email_key")
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String @default("USER")
+  account       Account?
+  model         Model[]
+}
+
+model VerificationToken {
+  id      String   @id  @default(cuid())
+  email   String
+  token   String   @unique(map: "VerificationToken_token_key")
+  expires DateTime
+
+  @@unique([email, token], map: "VerificationToken_email_token_key")
+}
+
+

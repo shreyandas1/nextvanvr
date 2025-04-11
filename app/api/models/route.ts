@@ -5,24 +5,12 @@ import { writeFile } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
 import { db } from '@/lib/db';
 import { auth } from '@/auth';
+import { uploadFileToAzure } from '@/lib/azure';
 
 const checkFileType = (file: File, extension: string) => {
 	const fileName = file.name;
 
 	return fileName.split('.')[1] === extension;
-};
-
-const writeFileToDir = async (dirname: string, file: File) => {
-	const bytes = await file.arrayBuffer();
-	const buffer = Buffer.from(bytes);
-
-	const dirPath = join('models', dirname);
-	if (!existsSync(dirPath)) {
-		mkdirSync(dirPath);
-	}
-
-	const filePath = join(dirPath, file.name);
-	await writeFile(filePath, buffer);
 };
 
 export const POST = async (request: NextRequest) => {
@@ -55,11 +43,14 @@ export const POST = async (request: NextRequest) => {
 	}
 
 	try {
-		writeFileToDir(modelName, objFile);
-		writeFileToDir(modelName, txtFile);
-		writeFileToDir(modelName, mtlFile);
+		// upload files to azure
+		await uploadFileToAzure(objFile.name, await objFile.arrayBuffer());
+		await uploadFileToAzure(mtlFile.name, await mtlFile.arrayBuffer());
+		await uploadFileToAzure(txtFile.name, await txtFile.arrayBuffer());
+
 	} catch (e) {
-		return NextResponse.json({ error: 'Something went wrong!' });
+		console.error('Error uploading files to Azure:', e);
+		return NextResponse.json({ error: "Failed to upload files" }, { status: 500 });
 	}
 
 	await db.model.create({
