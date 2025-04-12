@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TextureLoader } from 'three';
 import * as THREE from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { fetchFileFromAzure } from '@/lib/azure';
 
 export function Model({ textureFile, objectFile }) {
@@ -20,7 +20,7 @@ export function Model({ textureFile, objectFile }) {
 
 				// Load the OBJ file
 				const objResponse = await fetchFileFromAzure(objectFile);
-				const objText = await objResponse.blobBody.then((blob) => blob.text());
+				const objText: string = await objResponse.blobBody.then((blob: Blob) => blob.text());
 
 				// Create texture
 				const texture = await new Promise((resolve) => {
