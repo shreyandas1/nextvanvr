@@ -71,7 +71,7 @@ const ResetForm = () => {
 							)}
 						/>
 					</div>
-					<FormError mes sage={error} />
+					<FormError message={error} />
 					<FormSuccess message={success} />
 					<Button type="submit">Reset</Button>
 				</form>
