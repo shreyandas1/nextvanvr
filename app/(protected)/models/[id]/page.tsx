@@ -14,6 +14,58 @@ import AnnotationForm from '@/components/AnnotationsForm';
 import { z } from 'zod';
 import { AnnotationSchema } from '@/schema';
 
+/**
+ * The `Page` component serves as a model viewer page with annotation editing capabilities.
+ * It fetches model data and annotations from the server, displays them in a 3D scene, 
+ * and allows users to edit annotation positions or add new annotations.
+ *
+ * @component
+ *
+ * @returns {JSX.Element} The rendered model viewer page.
+ *
+ * @remarks
+ * - The component uses `useState` to manage various states such as model files, annotations, 
+ *   editing mode, and loading/failure states.
+ * - It fetches model data and annotations using Next.js API routes via `axios` in `useEffect` hooks.
+ * - Users can toggle edit mode, navigate between annotations, and update their positions.
+ * - New annotations can be submitted via the `AnnotationForm` component.
+ * - Edited annotations are saved to the server using the `saveAnnotations` function.
+ *
+ * @example
+ * ```tsx
+ * import Page from './page';
+ *
+ * function App() {
+ *   return <Page />;
+ * }
+ * ```
+ *
+ * @dependencies
+ * - `axios`: For making HTTP requests to Next.js API routes.
+ * - `useParams` from `next/navigation`: For accessing dynamic route parameters.
+ * - `AnnotationForm`: A form component for adding new annotations.
+ * - `Annotations`: A component for rendering annotations in the 3D scene.
+ * - `Model`: A component for rendering the 3D model.
+ * - `Scene`: A wrapper component for the 3D scene.
+ * - `zod`: For schema validation of annotation data.
+ * - `Button` from `@/components/ui/button`: For rendering interactive buttons.
+ *
+ * @state
+ * - `objFile` (`string | null`): The 3D model file.
+ * - `txtFile` (`string | null`): The texture file for the model.
+ * - `annotations` (`Array`): List of annotations for the model.
+ * - `editingAnnotation` (`number`): Index of the currently edited annotation.
+ * - `annotationLength` (`number`): Total number of annotations.
+ * - `editedAnnotations` (`Set<string>`): Set of IDs for annotations that have been edited.
+ * - `failState` (`boolean`): Indicates if a failure occurred during data fetching or saving.
+ * - `loading` (`boolean`): Indicates if the model and annotations are still loading.
+ * - `editMode` (`boolean`): Toggles the annotation editing mode.
+ *
+ * @functions
+ * - `handleClick(event)`: Updates the position of the currently edited annotation based on a 3D point.
+ * - `submitNewAnnotation(values)`: Submits a new annotation to the server and refreshes the annotations list.
+ * - `saveAnnotations()`: Saves all edited annotations to the server and refreshes the annotations list.
+ */
 export default function Page() {
 	const [objFile, setObjFile] = useState(null);
 	const [txtFile, setTxtFile] = useState(null);
