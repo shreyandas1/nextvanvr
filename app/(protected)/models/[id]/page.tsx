@@ -96,7 +96,7 @@ export default function Page() {
 			setObjFile(res.data.objFile);
 			setTxtFile(res.data.txtFile);
 		});
-	}, []);
+	});
 
 	useEffect(() => {
 		axios.get(`/api/models/${id}/annotations`).then((res) => {
@@ -105,7 +105,7 @@ export default function Page() {
 			setAnnotations(res.data.annotations);
 			setAnnotationLength(res.data.annotations.length);
 		});
-	}, []);
+	});
 
 
 	const handleClick = (event) => {

@@ -15,7 +15,7 @@ import { ModelForm } from '@/components/three/ModelForm';
 
 const addModelPage = async () => {
 	const session = await auth();
-
+	
 	if (!session || session.user.role !== 'ADMIN') {
 		return <AdminOnlyFailPage />;
 	}

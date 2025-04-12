@@ -61,7 +61,7 @@ const SettingsPage = () => {
 	return (
 		<div>
 			{models.map((model) => (
-				<p>
+				<p key={model.name}>
 					<Link href={`/models/${model.id}`}>{model.name}</Link>
 				</p>
 			))}
