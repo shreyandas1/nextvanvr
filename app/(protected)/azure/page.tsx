@@ -12,9 +12,8 @@ import AnnotationAlert from '@/components/three/AnnotationAlert';
 import { fetchFileFromAzure } from '@/lib/azure';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import { log } from 'node:console';
-
-
+import { Annotations } from '@/components/three/Annotations';
+import AnnotationForm from '@/components/AnnotationsForm';
 
 const heartProps = {
 	materialFile: 'Heart_300K_8Ktexture.mtl',
@@ -22,8 +21,7 @@ const heartProps = {
 	textureFile: 'Heart_300K_8Ktexture_u1_v1.jpg',
 };
 
-
-function HeartModel() {
+export function HeartModel() {
 	const [model, setModel] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -86,28 +84,6 @@ function HeartModel() {
 	return <primitive object={model} position={[0, 0, 0]} scale={[1, 1, 1]} />;
 }
 
-const Annotations = ({ annotations }) => {
-	return (
-		<group>
-			{annotations.map((annotation) => {
-				const { id, name, description, position } = annotation;
-				return (
-					<mesh key={id} position={position}>
-						<sphereGeometry args={[0.2, 32, 32]} />
-						<meshStandardMaterial color="red" />
-						<Html style={{ color: 'black' }}>
-							<div className="bg-white p-2 rounded shadow-lg">
-								<AnnotationAlert name={name} description={description} />
-							</div>
-						</Html>
-					</mesh>
-				);
-			})}
-		</group>
-	);
-};
-
-
 export default function HeartViewer() {
 	const [editMode, setEditMode] = useState(false);
 	const [editingAnnotation, setEditingAnnotation] = useState(0);
@@ -127,7 +103,7 @@ export default function HeartViewer() {
 			return annotation;
 		});
 
-		setAnnotations(updatedAnnotations );
+		setAnnotations(updatedAnnotations);
 	};
 
 	useEffect(() => {
@@ -137,7 +113,7 @@ export default function HeartViewer() {
 				const data = response.data;
 				console.log('Annotations data:', data);
 				setAnnotations(data);
-			
+
 				setAnnotationLength(data.length);
 			})
 			.catch((error) => {
@@ -147,18 +123,20 @@ export default function HeartViewer() {
 
 	const saveAnnotations = () => {
 		axios
-      .post('/api/heart', annotations)
-      .then((response) => {
-        console.log('Annotations saved successfully:', response.data);
-      })
-      .catch((error) => {
-        console.error('Error saving annotations:', error);
-      });
+			.post('/api/heart', annotations)
+			.then((response) => {
+				console.log('Annotations saved successfully:', response.data);
+			})
+			.catch((error) => {
+				console.error('Error saving annotations:', error);
+			});
 	};
 
 	return (
-		<div className="w-screeen h-screen bg-black rounded-lg p-4 grid grid-cols-1 grid-rows-1">
-			<div className="absolute top-0 left-0 z-10 p-4">
+		<div className="">
+			<div className="">
+				
+
 				<Button
 					onClick={() => setEditMode(!editMode)}
 					className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -194,6 +172,7 @@ export default function HeartViewer() {
 
 			<Scene>
 				<Annotations annotations={annotations} />
+
 				<mesh onClick={handleClick} position={[0, 0, 0]}>
 					<HeartModel />
 				</mesh>
@@ -201,4 +180,3 @@ export default function HeartViewer() {
 		</div>
 	);
 }
-

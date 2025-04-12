@@ -37,3 +37,12 @@ export const ModelSchema = z.object({
 	objFile: z.instanceof(File),
 	txtFile: z.instanceof(File),
 });
+
+export const AnnotationSchema = z.object({
+	name: z.string().min(1, {
+		message: 'Name is required',
+	}),
+	description: z.string().min(1, {
+		message: 'Description is required',
+	}),
+});

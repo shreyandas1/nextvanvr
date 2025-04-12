@@ -15,7 +15,7 @@ const checkFileType = (file: File, extension: string) => {
 
 export const POST = async (request: NextRequest) => {
 	const session = await auth();
-	console.log(session);
+
 
 	if (!session || session.user.role !== 'ADMIN') {
 		return NextResponse.json({ error: 'Unauthorized action' }, { status: 403 });
@@ -47,10 +47,12 @@ export const POST = async (request: NextRequest) => {
 		await uploadFileToAzure(objFile.name, await objFile.arrayBuffer());
 		await uploadFileToAzure(mtlFile.name, await mtlFile.arrayBuffer());
 		await uploadFileToAzure(txtFile.name, await txtFile.arrayBuffer());
-
 	} catch (e) {
 		console.error('Error uploading files to Azure:', e);
-		return NextResponse.json({ error: "Failed to upload files" }, { status: 500 });
+		return NextResponse.json(
+			{ error: 'Failed to upload files' },
+			{ status: 500 }
+		);
 	}
 
 	await db.model.create({

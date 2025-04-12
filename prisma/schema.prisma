@@ -31,14 +31,14 @@ model Account {
 model Annotation {
   id             String  @id  @default(cuid())
   annotationName String  @unique(map: "Annotation_annotationName_key")
-  description    String?
-  modelName      String
-  x              Int
-  y              Int
-  z              Int
-  model          Model   @relation(fields: [modelName], references: [name], map: "Annotation_modelName_fkey")
+  description    String
+  modelId      String
+  x              Int   @default(0)
+  y              Int   @default(0)
+  z              Int   @default(0)
+  model          Model   @relation(fields: [modelId], references: [id], map: "Annotation_modelId_fkey")
 
-  @@index([modelName], map: "Annotation_modelName_fkey")
+  @@index([modelId], map: "Annotation_modelId_fkey")
 }
 
 model Model {

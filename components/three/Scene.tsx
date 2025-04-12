@@ -1,22 +1,7 @@
 'use client';
 import { Canvas } from '@react-three/fiber';
-import { Html, OrbitControls } from '@react-three/drei';
-import { Suspense, useEffect, useState } from 'react';
-import { Model, modelProps } from './Model';
-import ClickableMesh from './ClickableMesh';
-import { Button } from '../ui/button';
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '../ui/accordion';
-import { AppSidebar } from '../app-sidebar';
-import { SidebarProvider } from '../ui/sidebar';
-import axios from 'axios';
-import { Router, useRouter } from 'next/router';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import { OrbitControls } from '@react-three/drei';
+import { Suspense, useState } from 'react';
 
 export function Scene(props) {
 	const [annotationMode, setAnnotationMode] = useState(false);
