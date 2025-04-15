@@ -1,3 +1,25 @@
+/**
+ * A React component that loads and renders a 3D model using Three.js.
+ * The model consists of an OBJ file and a texture file, both fetched from Azure storage.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.textureFile - The path to the texture file in Azure storage.
+ * @param {string} props.objectFile - The path to the OBJ file in Azure storage.
+ *
+ * @returns {JSX.Element | null} A Three.js primitive object representing the loaded model,
+ * or `null` if the model is not yet loaded or an error occurs.
+ *
+ * @remarks
+ * - This component uses the `fetchFileFromAzure` utility to fetch files from Azure storage.
+ * - The OBJ file is parsed using the `OBJLoader` from Three.js.
+ * - The texture is applied to the model using a `MeshStandardMaterial`.
+ * - If the model fails to load, an error is logged to the console.
+ *
+ * @example
+ * ```tsx
+ * <Model textureFile="path/to/texture.jpg" objectFile="path/to/model.obj" />
+ * ```
+ */
 import { useEffect, useState } from 'react';
 import { TextureLoader } from 'three';
 import * as THREE from 'three';

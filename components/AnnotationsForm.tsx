@@ -1,3 +1,35 @@
+/**
+ * AnnotationForm Component
+ *
+ * This component renders a form for creating a new annotation with fields for
+ * "name" and "description". It uses `react-hook-form` for form state management
+ * and validation, with `zod` for schema validation.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.onSubmit - Callback function to handle form submission.
+ *
+ * @returns {JSX.Element} The rendered AnnotationForm component.
+ *
+ * ## Features:
+ * - Validates the "name" and "description" fields using the `NameDescriptionSchema`.
+ * - Displays validation error messages for invalid inputs.
+ * - Disables form inputs and submit button while a submission is pending.
+ *
+ * ## Dependencies:
+ * - `react-hook-form` for form state management.
+ * - `zod` and `@hookform/resolvers/zod` for schema validation.
+ * - Custom UI components: `Form`, `FormControl`, `FormField`, `FormItem`, `FormLabel`,
+ *   `FormMessage`, `Input`, `Textarea`, and `Button`.
+ *
+ * ## Example Usage:
+ * ```tsx
+ * const handleFormSubmit = (data) => {
+ *   console.log('Form submitted:', data);
+ * };
+ *
+ * <AnnotationForm onSubmit={handleFormSubmit} />;
+ * ```
+ */
 'use client';
 
 import * as z from 'zod';

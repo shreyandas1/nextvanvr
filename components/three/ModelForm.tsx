@@ -1,3 +1,27 @@
+/**
+ * A React component that renders a form for submitting a 3D model.
+ * The form allows users to upload a `.mtl` file, `.obj` file, and `.txt` file,
+ * along with providing a name for the model. The form submission sends the data
+ * to the `/api/models` endpoint using a `POST` request with `multipart/form-data`.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.email - The email of the user submitting the model.
+ *
+ * @returns {JSX.Element} The rendered `ModelForm` component.
+ *
+ * @remarks
+ * - The component uses `useState` to manage form data, error messages, and success messages.
+ * - The `useTransition` hook is used to handle transitions during form submission.
+ * - The `axios` library is used for making HTTP requests.
+ * - The `ModelSchema` from `zod` is used to infer the type of the form data.
+ *
+ * @example
+ * ```tsx
+ * <ModelForm email="user@example.com" />
+ * ```
+ *
+ * @component
+ */
 'use client';
 import { useState, useTransition } from 'react';
 import { upload } from '@/actions/addModel';

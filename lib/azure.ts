@@ -1,3 +1,11 @@
+/**
+ * Fetches a file from an Azure Blob Storage container.
+ *
+ * @param fileName - The name of the file to fetch from the Azure Blob Storage container.
+ * @returns A promise that resolves to the file content.
+ * @throws Will throw an error if the connection string is not defined or if the file cannot be fetched.
+ */
+
 import { BlobServiceClient } from '@azure/storage-blob';
 
 export const fetchFileFromAzure = async (fileName: string): Promise<any> => {
