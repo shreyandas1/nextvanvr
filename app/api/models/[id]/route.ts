@@ -1,3 +1,26 @@
+/**
+ * Handles the GET request for retrieving a model by its ID.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param response - The outgoing HTTP response object.
+ * @returns A JSON response containing the model's details if found, or an error message if not.
+ *
+ * @remarks
+ * - The `id` is extracted from the URL path.
+ * - If the `id` is missing, a 400 Bad Request response is returned.
+ * - If no model is found with the given `id`, a 404 Not Found response is returned.
+ * - If the model is found, its name, `objFile`, `mtlFile`, and `txtFile` are returned in the response.
+ *
+ * @example
+ * // Example request URL: /api/models/123
+ * // Example response:
+ * // {
+ * //   "name": "Example Model",
+ * //   "objFile": "example.obj",
+ * //   "mtlFile": "example.mtl",
+ * //   "txtFile": "example.txt"
+ * // }
+ */
 import { db } from '@/lib/db';
 
 import { NextRequest, NextResponse } from 'next/server';

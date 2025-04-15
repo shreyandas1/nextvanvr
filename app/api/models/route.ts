@@ -1,3 +1,35 @@
+/**
+ * Checks if the provided file has the specified extension.
+ *
+ * @param file - The file to check.
+ * @param extension - The expected file extension.
+ * @returns A boolean indicating whether the file has the specified extension.
+ */
+// const checkFileType = (file: File, extension: string) => {};
+
+/**
+ * Handles the POST request to upload 3D model files (OBJ, MTL, and texture).
+ *
+ * - Validates the user's session and ensures the user has an ADMIN role.
+ * - Validates the presence and file types of the uploaded files.
+ * - Uploads the files to Azure Blob Storage.
+ * - Saves the model metadata to the database.
+ *
+ * @param request - The incoming HTTP request object.
+ * @returns A JSON response indicating success or failure.
+ */
+//export const POST = async (request: NextRequest) => {};
+
+/**
+ * Handles the GET request to retrieve all 3D models.
+ *
+ * - Validates the user's session.
+ * - Fetches all models from the database.
+ *
+ * @param req - The incoming HTTP request object.
+ * @returns A JSON response containing the list of models or an error message.
+ */
+// 	export const GET = async (req: NextRequest) => {};
 import { error, table } from 'console';
 import { NextRequest, NextResponse } from 'next/server';
 import path, { join } from 'path';

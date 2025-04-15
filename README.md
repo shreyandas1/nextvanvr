@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Issues/Technical Debt 
+
+- Need to refactor prisma schema and all the forms to allow the mtl file to be optional or remove it entirely as the current model rendering logic doesnt use it 
+  
+
+
 ## Getting Started
 
 First, run the development server:
